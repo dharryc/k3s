@@ -10,7 +10,7 @@ permissions:
 jobs:
   install-test:
     name: Install
-    runs-on: ubuntu-24.04
+    runs-on: runner1
     timeout-minutes: 40
     strategy:
       fail-fast: false
@@ -82,7 +82,7 @@ jobs:
       upload-image: true
   conf-test:
     name: Conformance
-    runs-on: ${{ github.repository_owner == 'k3s-io' && matrix.suite == 'parallel' && 'cncf-ubuntu-8-32-x86' || 'ubuntu-24.04' }}
+    runs-on: ${{ github.repository_owner == 'k3s-io' && matrix.suite == 'parallel' && 'cncf-ubuntu-8-32-x86' || 'runner1' }}
     needs: build
     timeout-minutes: 60
     strategy:
