@@ -118,6 +118,10 @@ jobs:
           sha256sum "${binary}" | sed 's|dist/artifacts/||' > "dist/artifacts/${checksum}"
         done
     
+    - name: Install Go
+      if: inputs.upload-image == true && steps.platforms.outputs.image_allowed == 'true'
+      uses: ./.github/actions/setup-go
+      
     - name: Build and save K3s image
       if: inputs.upload-image == true && steps.platforms.outputs.image_allowed == 'true'
       run: |
