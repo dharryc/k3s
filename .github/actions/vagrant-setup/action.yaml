@@ -3,6 +3,12 @@ description: 'A composite action that installs latest versions of vagrant and li
 runs:
   using: 'composite'
   steps:
+    # Minimal self-hosted runners may not ship these; they are already present on GitHub-hosted images
+    - name: Install prerequisites
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends ca-certificates curl gnupg lsb-release
     - name: Add vagrant to apt-get sources
       shell: bash
       run: |
