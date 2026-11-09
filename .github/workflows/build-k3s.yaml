@@ -40,6 +40,12 @@ jobs:
     - name: Checkout K3s
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
     
+    # Persistent self-hosted runners keep the docker context from earlier runs,
+    # which makes setup-docker-action fail with "context already exists".
+    - name: Remove stale setup-docker-action context
+      if: inputs.runs-on != ''
+      run: docker context rm -f setup-docker-action || true
+
     - name: Set up Docker
       uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
       with:
