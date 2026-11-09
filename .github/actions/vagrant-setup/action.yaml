@@ -32,7 +32,7 @@ runs:
     - name: Install vagrant dependencies
       shell: bash
       run: |
-        sudo apt-get install -y --no-install-recommends libxslt-dev libxml2-dev libvirt-dev ruby-bundler ruby-dev zlib1g-dev
+        sudo apt-get install -y --no-install-recommends build-essential pkg-config libxslt-dev libxml2-dev libvirt-dev ruby-bundler ruby-dev zlib1g-dev
     # This is a workaround for the libvirt group not being available in the current shell
     # https://github.com/actions/runner-images/issues/7670#issuecomment-1900711711
     - name: Make the libvirt socket rw accessible to everyone

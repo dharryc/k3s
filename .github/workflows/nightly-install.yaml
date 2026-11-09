@@ -80,7 +80,7 @@ jobs:
       # Self-hosted runners are persistent, so don't leave VMs behind
       - name: "Vagrant Destroy"
         if: always()
-        run: vagrant destroy -f
+        run: command -v vagrant >/dev/null && vagrant destroy -f || true
   build:
     uses: ./.github/workflows/build-k3s.yaml
     with:
