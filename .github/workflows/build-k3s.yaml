@@ -21,6 +21,11 @@ on:
         description: 'Whether to build K3s with -cover for test coverage collection'
         required: false
         default: false
+      runs-on:
+        type: string
+        description: 'Override the runner label for the build job (e.g. a self-hosted runner)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -28,7 +33,7 @@ permissions:
 jobs:
   build:
     name: Build # DO NOT CHANGE THIS NAME, we rely on it for INSTALL_K3S_PR functionality
-    runs-on: ${{ (!contains(inputs.platforms, 'amd64') && !contains(inputs.platforms, 'windows/') && !contains(inputs.platforms, 'riscv64') && (github.repository_owner == 'k3s-io' && 'cncf-ubuntu-16-64-arm' || 'ubuntu-24.04-arm')) 
+    runs-on: ${{ inputs.runs-on || (!contains(inputs.platforms, 'amd64') && !contains(inputs.platforms, 'windows/') && !contains(inputs.platforms, 'riscv64') && (github.repository_owner == 'k3s-io' && 'cncf-ubuntu-16-64-arm' || 'ubuntu-24.04-arm')) 
       || (github.repository_owner == 'k3s-io' && 'cncf-ubuntu-16-64-x86' || 'ubuntu-24.04') }}
     timeout-minutes: 30
     steps:
