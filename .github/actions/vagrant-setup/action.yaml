@@ -41,4 +41,9 @@ runs:
         sudo chmod a+rw /var/run/libvirt/libvirt-sock
     - name: Install vagrant-libvirt plugin
       shell: bash
-      run: vagrant plugin install vagrant-libvirt
+      # HashiCorp's vagrant package bundles its own ruby and does not find the system libvirt on its own,
+      # so point the native extension build at the multiarch lib dir (see the vagrant-libvirt README).
+      run: |
+        export CONFIGURE_ARGS="with-libvirt-include=/usr/include/libvirt with-libvirt-lib=/usr/lib/$(gcc -dumpmachine)"
+        vagrant plugin install vagrant-libvirt --debug 2>&1 | grep -iE "error|cannot find|not found|mkmf|libvirt" | tail -n 40 || true
+        vagrant plugin list | grep -q vagrant-libvirt
