@@ -10,7 +10,7 @@ permissions:
 jobs:
   install-test:
     name: Install
-    runs-on: runner1
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     strategy:
       fail-fast: false
@@ -25,7 +25,6 @@ jobs:
       INSTALL_K3S_CHANNEL: ${{ matrix.channel }}
     steps:
       - name: Remove Unnecessary Tools
-        if: runner.environment == 'github-hosted'
         working-directory: /
         run: |
           sudo rm -rf \
@@ -77,18 +76,13 @@ jobs:
         run: vagrant provision --provision-with=k3s-status
       - name: "k3s-procps"
         run: vagrant provision --provision-with=k3s-procps
-      # Self-hosted runners are persistent, so don't leave VMs behind
-      - name: "Vagrant Destroy"
-        if: always()
-        run: command -v vagrant >/dev/null && vagrant destroy -f || true
   build:
     uses: ./.github/workflows/build-k3s.yaml
     with:
       upload-image: true
-      runs-on: runner1
   conf-test:
     name: Conformance
-    runs-on: ${{ github.repository_owner == 'k3s-io' && matrix.suite == 'parallel' && 'cncf-ubuntu-8-32-x86' || 'runner1' }}
+    runs-on: ${{ github.repository_owner == 'k3s-io' && matrix.suite == 'parallel' && 'cncf-ubuntu-8-32-x86' || 'ubuntu-24.04' }}
     needs: build
     timeout-minutes: 60
     strategy:
@@ -140,4 +134,3 @@ jobs:
           echo "K3S_IMAGE=$IMAGE_TAG" >> $GITHUB_ENV
       - name: Run ${{ matrix.db }} ${{ matrix.suite}} Conformance Test
         run: go test -timeout=45m ./tests/docker/conformance/conformance_test.go -k3sImage="$K3S_IMAGE" -db ${{ matrix.db }} ${{ matrix.suite == 'serial' && '-serial' || '' }} -ginkgo.v -ci
-

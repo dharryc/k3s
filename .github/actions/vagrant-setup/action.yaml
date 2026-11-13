@@ -3,12 +3,6 @@ description: 'A composite action that installs latest versions of vagrant and li
 runs:
   using: 'composite'
   steps:
-    # Minimal self-hosted runners may not ship these; they are already present on GitHub-hosted images
-    - name: Install prerequisites
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends ca-certificates curl gnupg lsb-release
     - name: Add vagrant to apt-get sources
       shell: bash
       run: |
@@ -20,19 +14,19 @@ runs:
           echo "SECURITY ERROR: HashiCorp GPG key fingerprint mismatch!"
           exit 1
         fi
-        cat /tmp/hashicorp.asc | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        cat /tmp/hashicorp.asc | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
         echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
         rm /tmp/hashicorp.asc
     - name: Install vagrant and libvirt
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y --allow-downgrades libvirt-daemon libvirt-daemon-system vagrant=2.4.1-1 ruby-libvirt
+        sudo apt-get install -y libvirt-daemon libvirt-daemon-system vagrant=2.4.1-1 ruby-libvirt
         sudo systemctl enable --now libvirtd
     - name: Install vagrant dependencies
       shell: bash
       run: |
-        sudo apt-get install -y --no-install-recommends build-essential pkg-config libxslt-dev libxml2-dev libvirt-dev ruby-bundler ruby-dev zlib1g-dev
+        sudo apt-get install -y --no-install-recommends libxslt-dev libxml2-dev libvirt-dev ruby-bundler ruby-dev zlib1g-dev
     # This is a workaround for the libvirt group not being available in the current shell
     # https://github.com/actions/runner-images/issues/7670#issuecomment-1900711711
     - name: Make the libvirt socket rw accessible to everyone
@@ -41,9 +35,4 @@ runs:
         sudo chmod a+rw /var/run/libvirt/libvirt-sock
     - name: Install vagrant-libvirt plugin
       shell: bash
-      # HashiCorp's vagrant package bundles its own ruby and does not find the system libvirt on its own,
-      # so point the native extension build at the multiarch lib dir (see the vagrant-libvirt README).
-      run: |
-        export CONFIGURE_ARGS="with-libvirt-include=/usr/include/libvirt with-libvirt-lib=/usr/lib/$(gcc -dumpmachine)"
-        vagrant plugin install vagrant-libvirt --debug 2>&1 | grep -iE "error|cannot find|not found|mkmf|libvirt" | tail -n 40 || true
-        vagrant plugin list | grep -q vagrant-libvirt
+      run: vagrant plugin install vagrant-libvirt
