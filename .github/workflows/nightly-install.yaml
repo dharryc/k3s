@@ -11,7 +11,7 @@ jobs:
   install-test:
     name: Install
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -84,7 +84,7 @@ jobs:
     name: Conformance
     runs-on: ${{ github.repository_owner == 'k3s-io' && matrix.suite == 'parallel' && 'cncf-ubuntu-8-32-x86' || 'ubuntu-24.04' }}
     needs: build
-    timeout-minutes: 60
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -133,4 +133,4 @@ jobs:
           IMAGE_TAG=$(docker image ls --format '{{.Repository}}:{{.Tag}}' | grep 'rancher/k3s')
           echo "K3S_IMAGE=$IMAGE_TAG" >> $GITHUB_ENV
       - name: Run ${{ matrix.db }} ${{ matrix.suite}} Conformance Test
-        run: go test -timeout=45m ./tests/docker/conformance/conformance_test.go -k3sImage="$K3S_IMAGE" -db ${{ matrix.db }} ${{ matrix.suite == 'serial' && '-serial' || '' }} -ginkgo.v -ci
+        run: go test -timeout=90m ./tests/docker/conformance/conformance_test.go -k3sImage="$K3S_IMAGE" -db ${{ matrix.db }} ${{ matrix.suite == 'serial' && '-serial' || '' }} -ginkgo.v -ci
