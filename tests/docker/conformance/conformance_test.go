@@ -61,7 +61,7 @@ var _ = Describe("Conformance Tests", Ordered, func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(os.Chmod(filepath.Join(config.TestDir, "hydrophone"), 0755)).To(Succeed())
 		})
-		// Takes about 15min to run, so expect nothing to happen for a while
+		// Takes about an hour to run, so expect nothing to happen for a while
 		It("should run parallel conformance tests", func() {
 			if *serial {
 				Skip("Skipping parallel conformance tests")
