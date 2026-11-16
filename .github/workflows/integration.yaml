@@ -46,7 +46,7 @@ jobs:
   itest:
     needs: build
     name: Integration Tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04 # TEMP: testing sudo-rs compatibility (k3s-io/k3s#14915)
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -100,7 +100,7 @@ jobs:
         path: tests/integration/${{ matrix.itest }}/*log.txt
         retention-days: 30
     - name: Generate coverage report
-      run: sudo -E env "PATH=$PATH" go tool covdata textfmt -i $GOCOVERDIR -o ${{ matrix.itest }}.out
+      run: sudo env "PATH=$PATH" "GOTOOLCHAIN=$GOTOOLCHAIN" "HOME=$HOME" go tool covdata textfmt -i $GOCOVERDIR -o ${{ matrix.itest }}.out
     - name: Upload Results To Codecov
       uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v5
       with:

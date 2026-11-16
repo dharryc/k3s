@@ -20,7 +20,7 @@ See the [local storage test](../integration/localstorage/localstorage_int_test.g
 ## Running
 
 Integration tests can be run with no k3s cluster present, each test will spin up and kill the appropriate k3s server it needs.  
-Note: Integration tests must be run as root, prefix the commands below with `sudo -E env "PATH=$PATH"` if a sudo user.
+Note: Integration tests must be run as root, prefix the commands below with `sudo env "PATH=$PATH" "HOME=$HOME" "GOCOVERDIR=$GOCOVERDIR"` if a sudo user (`sudo -E` is not supported by sudo-rs, the default sudo on Ubuntu 26.04+).
 ```bash
 go test ./tests/integration/... -run Integration -ginkgo.v -test.v
 ```
