@@ -29,15 +29,6 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: "docker"
-    directory: "/conformance"
-    labels:
-      - "kind/dependabot"
-    reviewers:
-      - "k3s-io/k3s-dev"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "docker"
     directory: "/tests/e2e/scripts"
     labels:
       - "kind/dependabot"
@@ -64,11 +55,3 @@ updates:
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "docker"
-    directory: "/tests/terraform"
-    labels:
-      - "kind/dependabot"
-    reviewers:
-      - "k3s-io/k3s-dev"
-    schedule:
-      interval: "weekly"
